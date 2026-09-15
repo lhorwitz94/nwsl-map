@@ -581,17 +581,25 @@
     zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top);
   }, { passive:false });
 
-  var dragging = false, sx=0, sy=0, stx=0, sty=0, moved=false;
+  // Only a real drag (movement past a small threshold) engages panning and
+  // pointer capture. Capturing immediately on pointerdown would redirect the
+  // browser's synthesized click away from whatever was pressed (e.g. a pin),
+  // silently breaking taps on team badges.
+  var DRAG_THRESHOLD = 4;
+  var dragging = false, sx=0, sy=0, stx=0, sty=0, moved=false, pointerId=null;
   viewport.addEventListener("pointerdown", function(e){
-    dragging = true; moved = false;
+    dragging = true; moved = false; pointerId = e.pointerId;
     sx = e.clientX; sy = e.clientY; stx = tx; sty = ty;
-    viewport.classList.add("grabbing");
-    viewport.setPointerCapture(e.pointerId);
   });
   viewport.addEventListener("pointermove", function(e){
     if(!dragging) return;
     var dx = e.clientX - sx, dy = e.clientY - sy;
-    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+    if(!moved){
+      if(Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+      moved = true;
+      viewport.classList.add("grabbing");
+      try{ viewport.setPointerCapture(pointerId); }catch(err){}
+    }
     tx = stx + dx; ty = sty + dy;
     clamp();
     apply();
@@ -599,6 +607,9 @@
   function endDrag(e){
     if(!dragging) return;
     dragging = false;
+    if(moved && pointerId !== null){
+      try{ viewport.releasePointerCapture(pointerId); }catch(err){}
+    }
     viewport.classList.remove("grabbing");
   }
   viewport.addEventListener("pointerup", endDrag);
