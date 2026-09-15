@@ -10,16 +10,16 @@
 <style>
   :root{
     --pitch-0:#001E60;
-    --pitch-1:#0036FF;
-    --pitch-2:#123626;
-    --pitch-2b:#16402d;
+    --pitch-1:#D21F26;
+    --pitch-2:#0036FF;
+    --pitch-2b:#1b46ff;
     --line:#eef0e4;
     --line-dim:#c9cfc0;
     --chalk:#f5f3ea;
-    --sage:#9db3a2;
-    --sage-dim:#6f8a76;
-    --gold:#f2c94c;
-    --gold-dim:#caa53d;
+    --sage:#e7ecf3;
+    --sage-dim:#d3dbe6;
+    --gold:#ffffff;
+    --gold-dim:#e3e3e3;
     --navy-ink:#0c1f17;
     --shadow: 0 20px 60px -20px rgba(0,0,0,0.65);
     --radius-lg: 28px;
@@ -193,13 +193,13 @@
 
   svg.usmap{ width:100%; height:100%; display:block; }
   .land{ fill: var(--line); }
-  .borders{ fill:none; stroke: rgba(18,54,38,0.55); stroke-width:0.6; stroke-linejoin:round; }
+  .borders{ fill:none; stroke: rgba(0,30,96,0.55); stroke-width:0.6; stroke-linejoin:round; }
 
   .pin{ cursor:pointer; }
   .pin:focus-visible circle.dot{ outline: 2px solid var(--gold); outline-offset: 2px; }
   .pin circle.halo{ fill: var(--gold); opacity:0; transition: opacity .15s ease; }
   .pin:hover circle.halo, .pin.active circle.halo{ opacity: 0.35; }
-  .pin circle.dot{ stroke: rgba(8,32,26,0.55); stroke-width:1.1; transition: transform .12s ease; transform-box: fill-box; transform-origin:center; }
+  .pin circle.dot{ stroke: rgba(0,30,96,0.55); stroke-width:1.1; transition: transform .12s ease; transform-box: fill-box; transform-origin:center; }
   .pin:hover circle.dot, .pin.active circle.dot{ transform: scale(1.12); }
   .pin.dimmed{ opacity: 0.22; }
   .pin text{
@@ -245,7 +245,7 @@
   .legend .swatch{
     width:9px; height:9px; border-radius:50%;
     background: var(--gold);
-    box-shadow: 0 0 0 3px rgba(242,201,76,0.18);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.28);
   }
 
   #cardLayer{
