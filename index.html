@@ -256,6 +256,7 @@
   .card{
     position:absolute;
     width: 280px;
+    max-width: calc(100vw - 24px);
     background: var(--chalk);
     color: var(--navy-ink);
     border-radius: var(--radius-md);
@@ -263,23 +264,32 @@
     padding: 18px;
     z-index: 20;
     opacity:0;
-    transform: translate(-50%, calc(-100% - 18px)) scale(0.96);
+    transform: translateY(calc(-100% - 18px)) scale(0.96);
     pointer-events:none;
     transition: opacity .14s ease, transform .14s ease;
   }
   .card.open{
     opacity:1;
-    transform: translate(-50%, calc(-100% - 12px)) scale(1);
+    transform: translateY(calc(-100% - 12px)) scale(1);
     pointer-events:auto;
+  }
+  .card.below{
+    transform: translateY(18px) scale(0.96);
+  }
+  .card.below.open{
+    transform: translateY(12px) scale(1);
   }
   .card::after{
     content:"";
     position:absolute;
-    left:50%; bottom:-7px;
+    left: var(--arrow-x, 50%); bottom:-7px;
     width:14px; height:14px;
     background: var(--chalk);
     transform: translateX(-50%) rotate(45deg);
     border-radius: 3px;
+  }
+  .card.below::after{
+    top:-7px; bottom:auto;
   }
   .card .close{
     position:absolute;
@@ -493,8 +503,27 @@
     var dot = pinsG.querySelector('[data-code="' + code + '"] circle.dot');
     if(!card || !dot) return;
     var rect = dot.getBoundingClientRect();
-    card.style.left = (rect.left + rect.width / 2 + window.scrollX) + "px";
-    card.style.top = (rect.top + rect.height / 2 + window.scrollY) + "px";
+    var margin = 12;
+    var cardWidth = card.offsetWidth;
+    var cardHeight = card.offsetHeight;
+    var anchorX = rect.left + rect.width / 2;
+    var anchorY = rect.top + rect.height / 2;
+
+    // Flip below the pin when there isn't room to show the card above it
+    // (e.g. pins near the top of the map on a short mobile viewport).
+    var below = (anchorY - cardHeight - 26) < margin;
+    card.classList.toggle("below", below);
+
+    // Clamp horizontally so the card never runs off a narrow screen; the
+    // arrow offset keeps it visually pointing at the pin even when shifted.
+    var minLeft = margin;
+    var maxLeft = Math.max(minLeft, window.innerWidth - margin - cardWidth);
+    var left = Math.max(minLeft, Math.min(maxLeft, anchorX - cardWidth / 2));
+    var arrowX = Math.max(16, Math.min(cardWidth - 16, anchorX - left));
+
+    card.style.left = (left + window.scrollX) + "px";
+    card.style.top = (anchorY + window.scrollY) + "px";
+    card.style.setProperty("--arrow-x", arrowX + "px");
   }
 
   function openCard(code){
